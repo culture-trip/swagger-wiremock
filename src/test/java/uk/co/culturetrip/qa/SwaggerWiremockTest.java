@@ -24,7 +24,19 @@ public class SwaggerWiremockTest {
     }
 
     @Test
-    public void basicHappyPathTest() throws Exception {
+    public void basicHappyPathTestJson() throws Exception {
+        URL url = new URL("http://localhost:9988/cars");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.setRequestProperty("Accept", "*/*");
+        String response = con.getResponseMessage();
+        Assert.assertEquals("OK", response);
+    }
+
+    @Test
+    public void basicHappyPathTestYaml() throws Exception {
+        myStub.configureStub("9987", "src/test/resources/openApi.yml", "src/test/resources" );
+        myStub.start();
         URL url = new URL("http://localhost:9988/cars");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");

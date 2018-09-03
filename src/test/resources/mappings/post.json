@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": ".*/cars"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"response\":\"posted\"}"
+  }
+}

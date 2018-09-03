@@ -1,5 +1,7 @@
 package uk.co.culturetrip.qa;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.atlassian.oai.validator.wiremock.SwaggerValidationListener;
 import com.github.tomakehurst.wiremock.common.FileSource;
@@ -24,14 +26,21 @@ public class SwaggerWiremock {
 
     public void configureStub(String port, String swaggerFile, String mappingsFileLocation) throws Exception {
 
+        // start server passing in port and mappingd
         wireMockServer = new WireMockServer(options()
                 .port(Integer.parseInt(port))
                 .usingFilesUnderDirectory(mappingsFileLocation)
                 .extensions(ContractValidationTransformer.class));
 
+        // convert yaml to json if needed
         String swagger = new String(Files.readAllBytes(Paths.get(swaggerFile)));
+        if (swaggerFile.endsWith("yml") || swaggerFile.endsWith("yaml"))
+            swagger = convertYamlToJson(swagger);
+
+        // add swagger validator listerner
         wireMockListener = new SwaggerValidationListener(swagger);
         wireMockServer.addMockServiceRequestListener(wireMockListener);
+
         System.out.println("configured smart stub on port:" + port + " with swagger:" + swaggerFile + " with mappings:" + mappingsFileLocation);
 
     }
@@ -92,6 +101,15 @@ public class SwaggerWiremock {
         }
     }
 
+
+
+    private String convertYamlToJson(String yaml) throws Exception{
+        ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
+        Object obj = yamlReader.readValue(yaml, Object.class);
+        ObjectMapper jsonWriter = new ObjectMapper();
+        return jsonWriter.writeValueAsString(obj);
+    }
+
     // String port, String swaggerFile, String mappingsFileLocation
     public static void main(String[] args) {
         SwaggerWiremock mystub = new SwaggerWiremock();
@@ -102,4 +120,5 @@ public class SwaggerWiremock {
             System.out.println(e.getLocalizedMessage());
         }
     }
+
 }

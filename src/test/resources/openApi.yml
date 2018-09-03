@@ -1,0 +1,66 @@
+---
+swagger: '2.0'
+info:
+  version: 0.0.1
+basePath: ''
+paths:
+  "/cars":
+    post:
+      description: ''
+      responses:
+        '200':
+          description: ''
+          schema:
+            "$ref": "#/definitions/response"
+        '201':
+          description: ''
+          schema:
+            "$ref": "#/definitions/response"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          "$ref": "#/definitions/body"
+    put:
+      description: ''
+      responses:
+        '200':
+          description: ''
+          schema:
+            "$ref": "#/definitions/response"
+        '201':
+          description: ''
+          schema:
+            "$ref": "#/definitions/response"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          "$ref": "#/definitions/body"
+    delete:
+      description: ''
+      responses:
+        '400':
+          description: ''
+          schema:
+            "$ref": "#/definitions/response"
+    get:
+      description: ''
+      responses:
+        '200':
+          description: ''
+          schema:
+            "$ref": "#/definitions/response"
+definitions:
+  body:
+    type: object
+    properties:
+      action:
+        type: string
+  response:
+    type: object
+    properties:
+      response:
+        type: string
