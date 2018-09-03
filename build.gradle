@@ -9,3 +9,15 @@ dependencies {
     compile "com.github.tomakehurst:wiremock:2.18.0"
     compile group: 'com.atlassian.oai', name: 'swagger-request-validator-wiremock', version: '2.0.0-rc2'
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'uk.co.culturetrip.qa.SwaggerWiremock'
+        )
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

@@ -8,13 +8,10 @@ import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
-
-
-import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public abstract class SwaggerWiremock {
+public class SwaggerWiremock {
     // declare fields
 
     public static WireMockServer wireMockServer = null;
@@ -25,22 +22,17 @@ public abstract class SwaggerWiremock {
      connect transformers
      ********************************************************************************/
 
-    public void configureStub(String port, String swaggerFile, String mappingsFileLocation) {
+    public void configureStub(String port, String swaggerFile, String mappingsFileLocation) throws Exception {
 
         wireMockServer = new WireMockServer(options()
                 .port(Integer.parseInt(port))
                 .usingFilesUnderDirectory(mappingsFileLocation)
                 .extensions(ContractValidationTransformer.class));
 
-        try {
-            String swagger = new String(Files.readAllBytes(Paths.get(swaggerFile)));
-            wireMockListener = new SwaggerValidationListener(swagger);
-            wireMockServer.addMockServiceRequestListener(wireMockListener);
-            System.out.println("configured smart stub on port:" + port + " with swagger:" + swaggerFile + " with mappings:" + mappingsFileLocation);
-
-        } catch (Exception e) {
-            System.out.println("Error reading swagger:"+e.getLocalizedMessage());
-        }
+        String swagger = new String(Files.readAllBytes(Paths.get(swaggerFile)));
+        wireMockListener = new SwaggerValidationListener(swagger);
+        wireMockServer.addMockServiceRequestListener(wireMockListener);
+        System.out.println("configured smart stub on port:" + port + " with swagger:" + swaggerFile + " with mappings:" + mappingsFileLocation);
 
     }
 
@@ -79,6 +71,7 @@ public abstract class SwaggerWiremock {
 
             // validate swagger
             try {
+                wireMockListener.reset();
                 wireMockListener.requestReceived(request, response);
                 wireMockListener.assertValidationPassed();
                 return response;
@@ -87,6 +80,7 @@ public abstract class SwaggerWiremock {
                 return Response.Builder.like(response)
                         .but()
                         .statusMessage("Invalid contract: " + e.getLocalizedMessage())
+                        .body("Invalid contract: " + e.getLocalizedMessage())
                         .status(400)
                         .build();
             }
@@ -95,6 +89,17 @@ public abstract class SwaggerWiremock {
         @Override
         public String getName() {
             return "ContractValidationTransformer";
+        }
+    }
+
+    // String port, String swaggerFile, String mappingsFileLocation
+    public static void main(String[] args) {
+        SwaggerWiremock mystub = new SwaggerWiremock();
+        try {
+            mystub.configureStub(args[0], args[1], args[2]);
+            mystub.start();
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
         }
     }
 }
