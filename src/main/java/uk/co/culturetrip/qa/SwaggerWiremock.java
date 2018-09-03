@@ -51,11 +51,6 @@ public class SwaggerWiremock {
     public void start() {
         if (wireMockServer != null && !wireMockServer.isRunning()) {
             wireMockServer.start();
-            try {
-                Thread.sleep(2000);
-            } catch (Exception e) {
-
-            }
             System.out.println("started smart stub");
         }
     }
