@@ -1,4 +1,9 @@
 
+Stubbing of dependent APIs can be achieved with Wiremock out-of-the box.
+
+However we want to avoid finding integration issues late in the test cycle, and support Contract Based testing, 
+by using Wiremock stubs, that validate against Swagger contract. 
+
 To run...
 
 Arguments:
