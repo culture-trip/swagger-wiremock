@@ -11,6 +11,13 @@ This framework will provide that... you will need to provide a Swagger file and 
 
 ## HOW TO RUN
 
+```
+gradle build
+```
+
+
+## HOW TO RUN
+
 
 ```
 1. A JAR file runs Wiremock with the following arguments:
