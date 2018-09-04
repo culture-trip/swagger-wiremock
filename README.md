@@ -9,17 +9,33 @@ We can do this be using Wiremock stubs that validate against the wagger contract
 
 This framework will provide that... you will need to provide a Swagger file and the canned request/responses required by your tests.
 
+## HOW TO BUILD
+
+```
+gradle build
+```
+
+
 ## HOW TO RUN
 
-A JAR file runs Wiremock with the following arguments:
+
+```
+1. A JAR file runs Wiremock with the following arguments:
 - Port
 - Swagger file (json or yaml)
 - Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
 
-```
-E.g.
+   E.g.  java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
 
-java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
+2. Programmatically passing port and swagger but without mappings
+
+   E.g.  SwaggerWiremock myStub = new SwaggerWiremock("9987", "src/test/resources/openApi.json");
+         myStub.stubFor(get(urlMatching(".*/cars"))
+                .willReturn(aResponse()
+                .withStatus(200)
+                .withBody("{\"response\":\"lorries\"}")));
+         myStub.start();
+     
 ```
 
 
