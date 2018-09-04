@@ -60,7 +60,7 @@ public class SwaggerWiremockTest {
     }
 
     @Test
-    public void basicHappyPathTestProgrammaticControl() throws Exception {
+    public void basicHappyPathTestProgrammatic() throws Exception {
         myStub = new SwaggerWiremock("9987", "src/test/resources/openApi.json");
         myStub.stubFor(get(urlMatching(".*/cars")).atPriority(0)
                 .willReturn(aResponse()
@@ -73,5 +73,21 @@ public class SwaggerWiremockTest {
         HttpEntity entity = response.getEntity();
         String responseString = EntityUtils.toString(entity, "UTF-8");
         Assert.assertEquals("{\"response\":\"lorries\"}", responseString);
+    }
+
+    @Test
+    public void sadPathProgromatic() throws Exception {
+        myStub = new SwaggerWiremock("9987", "src/test/resources/openApi.json");
+        myStub.stubFor(get(urlMatching(".*/cars")).atPriority(0)
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withBody("{\"response\":\"trains\"}")));
+        myStub.start();
+        URL url = new URL("http://localhost:9987/cars");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.setRequestProperty("Accept", "application/json");
+        String response = con.getResponseMessage();
+        Assert.assertEquals("Invalid contract: Validation failed.?[ERROR] Request Accept header '[application/json]' does not match any defined response types. Must be one of: [*/*].", response);
     }
 }
