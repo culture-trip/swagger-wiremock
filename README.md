@@ -9,7 +9,7 @@ We can do this be using Wiremock stubs that validate against the wagger contract
 
 This framework will provide that... you will need to provide a Swagger file and the canned request/responses required by your tests.
 
-## HOW TO RUN
+## HOW TO BUILD
 
 ```
 gradle build
