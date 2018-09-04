@@ -22,7 +22,7 @@ This framework will provide that... you will need to provide a Swagger file and 
 
 2. Programmatically passing port and swagger but without mappings
 
-   SwaggerWiremock myStub = new SwaggerWiremock("9987", "src/test/resources/openApi.json");
+   E.g.  SwaggerWiremock myStub = new SwaggerWiremock("9987", "src/test/resources/openApi.json");
      
 ```
 
