@@ -11,15 +11,19 @@ This framework will provide that... you will need to provide a Swagger file and 
 
 ## HOW TO RUN
 
-A JAR file runs Wiremock with the following arguments:
+
+```
+1. A JAR file runs Wiremock with the following arguments:
 - Port
 - Swagger file (json or yaml)
 - Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
 
-```
-E.g.
+   E.g.  java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
 
-java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
+2. Programmatically passing port and swagger but without mappings
+
+   SwaggerWiremock myStub = new SwaggerWiremock("9987", "src/test/resources/openApi.json");
+     
 ```
 
 
