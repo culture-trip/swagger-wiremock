@@ -13,10 +13,8 @@ import com.github.tomakehurst.wiremock.http.Response;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class SwaggerWiremock {
-    // declare fields
+public class SwaggerWiremock extends WireMockServer {
 
-    public static WireMockServer wireMockServer = null;
     private static SwaggerValidationListener wireMockListener = null;
 
     /*********************************************************************************
@@ -24,50 +22,42 @@ public class SwaggerWiremock {
      connect transformers
      ********************************************************************************/
 
-    public void configureStub(String port, String swaggerFile, String mappingsFileLocation) throws Exception {
+    public SwaggerWiremock(String port, String swaggerFile, String mappingsFileLocation) throws Exception {
 
-        // start server passing in port and mappingd
-        wireMockServer = new WireMockServer(options()
+        // Start server on port with transformer and canned files
+        super(options()
                 .port(Integer.parseInt(port))
                 .usingFilesUnderDirectory(mappingsFileLocation)
                 .extensions(ContractValidationTransformer.class));
+        setUpServer(swaggerFile);
+        System.out.println("configured smart stub on port:" + port + " with swagger:" + swaggerFile + " with mappings:" + mappingsFileLocation);
+    }
 
+    public SwaggerWiremock(String port, String swaggerFile) throws Exception {
+
+        // Start server on port with transformer and canned files
+        super(options()
+                .port(Integer.parseInt(port))
+                .extensions(ContractValidationTransformer.class));
+        setUpServer(swaggerFile);
+        System.out.println("configured smart stub on port:" + port + " with swagger:" + swaggerFile);
+    }
+
+    private void setUpServer(String swaggerFile) throws Exception{
         // convert yaml to json if needed
         String swagger = new String(Files.readAllBytes(Paths.get(swaggerFile)));
         if (swaggerFile.endsWith("yml") || swaggerFile.endsWith("yaml"))
             swagger = convertYamlToJson(swagger);
 
-        // add swagger validator listerner
+        // add swagger validator listener
         wireMockListener = new SwaggerValidationListener(swagger);
-        wireMockServer.addMockServiceRequestListener(wireMockListener);
+        super.addMockServiceRequestListener(wireMockListener);
+  }
 
-        System.out.println("configured smart stub on port:" + port + " with swagger:" + swaggerFile + " with mappings:" + mappingsFileLocation);
 
-    }
-
-    /**************
-     start server
-     **************/
-    public void start() {
-        if (wireMockServer != null && !wireMockServer.isRunning()) {
-            wireMockServer.start();
-            System.out.println("started smart stub");
-        }
-    }
-
-    /**************
-     stop server
-     **************/
-    public void stop() {
-        if (wireMockServer == null)
-            System.out.println("Wiremock server may have found an invalid contract - please check logs");
-        else
-            wireMockServer.stop();
-    }
-
-    /*******************************************************
-     validate contract swagger and state and apply latency
-     ******************************************************/
+    /****************************
+     validate contract swagger
+     ****************************/
     public static class ContractValidationTransformer extends ResponseTransformer {
 
         @Override
@@ -107,9 +97,8 @@ public class SwaggerWiremock {
 
     // String port, String swaggerFile, String mappingsFileLocation
     public static void main(String[] args) {
-        SwaggerWiremock mystub = new SwaggerWiremock();
         try {
-            mystub.configureStub(args[0], args[1], args[2]);
+            SwaggerWiremock mystub = new SwaggerWiremock(args[0], args[1], args[2]);
             mystub.start();
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
