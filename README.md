@@ -21,9 +21,9 @@ gradle build
 
 ```
 1. A JAR file runs Wiremock with the following arguments:
-- Port
-- Swagger file (json or yaml)
-- Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
+   - Port
+   - Swagger file (json or yaml)
+   - Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
 
    E.g.  java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
 
