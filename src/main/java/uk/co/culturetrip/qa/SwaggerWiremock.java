@@ -17,6 +17,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Map;
 
 public class SwaggerWiremock extends WireMockServer {
 
@@ -141,7 +143,12 @@ public class SwaggerWiremock extends WireMockServer {
     // String port, String swaggerFile, String mappingsFileLocation
     public static void main(String[] args) {
         try {
-            SwaggerWiremock mystub = new SwaggerWiremock(args[0], args[1], args[2]);
+            Map<String, String> env = System.getenv();
+            SwaggerWiremock mystub = null;
+            if (env.get("SWAGGER_WIREMOCK_MAPPINGS_FOLDER")!=null)
+                mystub = new SwaggerWiremock(env.get("SWAGGER_WIREMOCK_PORT"), env.get("SWAGGER_WIREMOCK_CONTRACT"), env.get("SWAGGER_WIREMOCK_MAPPINGS_FOLDER"));
+            else
+                mystub = new SwaggerWiremock(env.get("SWAGGER_WIREMOCK_PORT"), env.get("SWAGGER_WIREMOCK_CONTRACT"));
             mystub.start();
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
