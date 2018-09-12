@@ -10,6 +10,11 @@ import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.Response;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -44,10 +49,14 @@ public class SwaggerWiremock extends WireMockServer {
     }
 
     private void setUpServer(String swaggerFile) throws Exception{
+
+        // extract swagger string
+        String swagger = (swaggerFile.startsWith("http") || swaggerFile.startsWith("file:///")) ? getUrlContents(swaggerFile) : new String(Files.readAllBytes(Paths.get(swaggerFile)));
+
         // convert yaml to json if needed
-        String swagger = new String(Files.readAllBytes(Paths.get(swaggerFile)));
         if (swaggerFile.endsWith("yml") || swaggerFile.endsWith("yaml"))
-            swagger = convertYamlToJson(swagger);
+             swagger = convertYamlToJson(swagger);
+
 
         // add swagger validator listener
         wireMockListener = new SwaggerValidationListener(swagger);
@@ -93,6 +102,40 @@ public class SwaggerWiremock extends WireMockServer {
         Object obj = yamlReader.readValue(yaml, Object.class);
         ObjectMapper jsonWriter = new ObjectMapper();
         return jsonWriter.writeValueAsString(obj);
+    }
+
+
+    private static String getUrlContents(String theUrl)
+    {
+        StringBuilder content = new StringBuilder();
+
+        // many of these calls can throw exceptions, so i've just
+        // wrapped them all in one try/catch statement.
+        try
+        {
+            // create a url object
+            URL url = new URL(theUrl);
+
+            // create a urlconnection object
+            URLConnection urlConnection = url.openConnection();
+
+            // wrap the urlconnection in a bufferedreader
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+            String line;
+
+            // read from the urlconnection via the bufferedreader
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                content.append(line + "\n");
+            }
+            bufferedReader.close();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return content.toString();
     }
 
     // String port, String swaggerFile, String mappingsFileLocation

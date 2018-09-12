@@ -24,8 +24,8 @@ public class SwaggerWiremockTest {
     }
 
     @Test
-    public void basicHappyPathTestJson() throws Exception {
-        myStub = new SwaggerWiremock("9988", "src/test/resources/openApi.json", "src/test/resources" );
+    public void basicHappyPathTestJsonSwagerInUrl() throws Exception {
+        myStub = new SwaggerWiremock("9988", "file:///Users/parshotamtoora/Downloads/swagger-wirmock/src/test/resources/openApi.json", "src/test/resources" );
         myStub.start();
         URL url = new URL("http://localhost:9988/cars");
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -36,7 +36,7 @@ public class SwaggerWiremockTest {
     }
 
     @Test
-    public void basicHappyPathTestYaml() throws Exception {
+    public void basicHappyPathTestYamlSwaggerInFile() throws Exception {
         myStub = new SwaggerWiremock("9988", "src/test/resources/openApi.yml", "src/test/resources" );
         myStub.start();
         URL url = new URL("http://localhost:9988/cars");
