@@ -22,12 +22,12 @@ docker build -f Dockerfile -t swagger-wiremock --no-cache .
 
 
 ```
-1. As a standalone JAR file with the following arguments:
-   - Port
-   - Swagger file path or Public URL for the Swagger file (json or yaml)
-   - Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
+1. As a standalone JAR file with the following environment variables:
+   SWAGGER_WIREMOCK_PORT - Port
+   SWAGGER_WIREMOCK_CONTRACT - Swagger file path or Public URL for the Swagger file (json or yaml)
+   SWAGGER_WIREMOCK_MAPPINGS- Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
 
-   E.g.  java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
+   E.g.  java -jar build/libs/swagger-wirmock.jar
    
          ... then hit http://localhost:9987
 
