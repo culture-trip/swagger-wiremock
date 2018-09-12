@@ -28,6 +28,8 @@ docker build -f Dockerfile -t swagger-wiremock --no-cache .
    - Root directory of Wiremock mappings... MUST be a folder called 'mappings' see Wiremock docs
 
    E.g.  java -jar build/libs/swagger-wirmock.jar 9987 src/test/resources/openApi.json src/test/resources
+   
+         ... then hit http://localhost:9987
 
 2. Programmatically
 
